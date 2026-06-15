@@ -1,0 +1,10 @@
+fastapi==0.110.0
+uvicorn==0.27.1
+openai==1.14.2
+psycopg2-binary==2.9.9
+pgvector==0.2.5
+python-dotenv==1.0.1
+langchain==0.1.13
+langchain-openai==0.1.1
+langchain-community==0.0.29
+pydantic==2.6.4
