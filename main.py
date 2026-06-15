@@ -1,11 +1,13 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
+from typing import List, Dict, Any
 from langchain_openai import OpenAIEmbeddings, ChatOpenAI
 from langchain_community.vectorstores.pgvector import PGVector
 from langchain_core.prompts import PromptTemplate
 from langchain_core.runnables import RunnablePassthrough
 from langchain_core.output_parsers import StrOutputParser
+from langchain_core.documents import Document
 from dotenv import load_dotenv
 import os
 
@@ -37,6 +39,7 @@ try:
     print("PostgreSQL Vector store loaded successfully!")
 except Exception as e:
     print(f"Warning: Vector store connection error: {e}")
+    vectorstore = None
     retriever = None
 
 llm = ChatOpenAI(model="gpt-4o-mini", temperature=0.2)
@@ -82,6 +85,31 @@ async def ask_question(req: QuestionRequest):
         return {"answer": answer}
     except Exception as e:
         return {"answer": f"I encountered an error while searching the scriptures: {str(e)}"}
+
+class IngestChunk(BaseModel):
+    page_content: str
+    metadata: Dict[str, Any]
+
+class IngestRequest(BaseModel):
+    chunks: List[IngestChunk]
+    secret: str
+
+@app.post("/api/ingest")
+async def ingest_data(req: IngestRequest):
+    # Extremely simple security check to prevent unauthorized ingestion
+    if req.secret != "SUPER_SECRET_INGEST_KEY_123":
+        raise HTTPException(status_code=401, detail="Unauthorized")
+        
+    if not vectorstore:
+        raise HTTPException(status_code=500, detail="Vector store not initialized")
+        
+    docs = [Document(page_content=c.page_content, metadata=c.metadata) for c in req.chunks]
+    
+    try:
+        vectorstore.add_documents(docs)
+        return {"status": "success", "inserted": len(docs)}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 @app.get("/health")
 def health_check():
