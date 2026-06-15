@@ -51,6 +51,12 @@ Use the provided Biblical context (which includes verses, explanations, and life
 If the answer is not contained in the context, you can draw upon your general knowledge of the Bible, but ALWAYS prioritize the provided context and cite specific chapters or verses mentioned.
 Speak with an encouraging and uplifting tone.
 
+When answering, structure your response to naturally include:
+1. Biblical Insight: Answer the question using scripture.
+2. Practical Steps: Provide actionable, real-world advice based on the answer (if applicable).
+3. Godly Qualities: Suggest virtues or fruits of the Spirit to focus on (e.g., patience, joy, self-control).
+4. Example Prayer: Conclude with a short, heartfelt prayer the user can pray.
+
 Context:
 {context}
 
@@ -62,7 +68,7 @@ Answer:"""
 prompt = PromptTemplate.from_template(template)
 
 def format_docs(docs):
-    return "\\n\\n".join(doc.page_content for doc in docs)
+    return "\n\n".join(doc.page_content for doc in docs)
 
 if retriever:
     rag_chain = (
