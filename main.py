@@ -42,7 +42,7 @@ except Exception as e:
     vectorstore = None
     retriever = None
 
-llm = ChatOpenAI(model="gpt-4o-mini", temperature=0.2)
+llm = ChatOpenAI(model="gpt-4o-mini", temperature=0.2, max_tokens=1500)
 
 template = """You are a wise, compassionate, and highly knowledgeable Biblical assistant for 'Root to Fruit'.
 Your goal is to help users find answers to their questions or problems using explicitly what is said in the Bible.
