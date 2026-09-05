@@ -34,6 +34,7 @@ try:
         collection_name=COLLECTION_NAME,
         connection_string=CONNECTION_STRING,
         embedding_function=embeddings,
+        engine_args={"pool_pre_ping": True, "pool_recycle": 300},
     )
     retriever = vectorstore.as_retriever(search_kwargs={"k": 5})
     print("PostgreSQL Vector store loaded successfully!")
